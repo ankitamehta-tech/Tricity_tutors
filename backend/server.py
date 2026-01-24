@@ -32,7 +32,7 @@ app = FastAPI()
 api_router = APIRouter(prefix="/api")
 security = HTTPBearer()
 
-JWT_SECRET = os.environ.get('JWT_SECRET', 'tricity-tutors-secret-key-2024')
+JWT_SECRET = os.environ.get('JWT_SECRET')
 JWT_ALGORITHM = "HS256"
 
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
