@@ -160,7 +160,7 @@ export default function WalletPage({ user, setUser }) {
                     </DialogHeader>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                       {coinPackages.map((pkg, idx) => (
-                        <Card key={idx} className="hover:border-yellow-500 transition-all cursor-pointer" onClick={() => handlePurchase(pkg)}>
+                        <Card key={idx} className="hover:border-yellow-500 transition-all">
                           <CardContent className="p-6 text-center">
                             <div className="text-3xl font-bold text-yellow-600 mb-2">{pkg.coins}</div>
                             <div className="text-sm text-muted-foreground mb-4">Coins</div>
@@ -169,6 +169,10 @@ export default function WalletPage({ user, setUser }) {
                               data-testid={`buy-${pkg.coins}-coins-btn`}
                               className="w-full bg-yellow-500 hover:bg-yellow-600 rounded-full"
                               disabled={loading}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!loading) handlePurchase(pkg);
+                              }}
                             >
                               {loading ? 'Processing...' : 'Buy Now'}
                             </Button>
