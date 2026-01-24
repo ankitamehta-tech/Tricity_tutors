@@ -12,6 +12,7 @@ export default function WalletPage({ user, setUser }) {
   const [walletData, setWalletData] = useState({ coins: 0, transactions: [] });
   const [loading, setLoading] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [processingPackage, setProcessingPackage] = useState(null);
 
   const coinPackages = [
     { coins: 50, price: 100 },
