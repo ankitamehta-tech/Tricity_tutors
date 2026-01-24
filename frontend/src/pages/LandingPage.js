@@ -175,18 +175,52 @@ export default function LandingPage({ user }) {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <GraduationCap className="w-6 h-6 text-indigo-600" />
-            <span className="text-xl font-outfit font-bold">Tricity Tutors</span>
+      <footer className="py-12 px-6 border-t bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <GraduationCap className="w-6 h-6 text-indigo-600" />
+                <span className="text-xl font-outfit font-bold">Tricity Tutors</span>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Connecting qualified tutors with students in Chandigarh, Mohali, Panchkula, and Zirakpur.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/tutors" className="text-muted-foreground hover:text-indigo-600">Browse Tutors</Link></li>
+                <li><Link to="/auth" className="text-muted-foreground hover:text-indigo-600">Sign Up</Link></li>
+                <li><Link to="/login" className="text-muted-foreground hover:text-indigo-600">Login</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/privacy-policy" className="text-muted-foreground hover:text-indigo-600">Privacy Policy</Link></li>
+                <li><Link to="/terms-conditions" className="text-muted-foreground hover:text-indigo-600">Terms & Conditions</Link></li>
+                <li><Link to="/refund-policy" className="text-muted-foreground hover:text-indigo-600">Refund Policy</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/contact-us" className="text-muted-foreground hover:text-indigo-600">Contact Us</Link></li>
+                <li><span className="text-muted-foreground">support@tricitytutors.com</span></li>
+                <li><span className="text-muted-foreground">Chandigarh, India</span></li>
+              </ul>
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Connecting Tutors & Students in Chandigarh Region
-          </p>
-          <p className="text-sm text-muted-foreground mt-4">
-            © 2024 Tricity Tutors. All rights reserved.
-          </p>
+          
+          <div className="border-t pt-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              © 2026 Tricity Tutors. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
