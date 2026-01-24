@@ -179,13 +179,13 @@ export default function WalletPage({ user, setUser }) {
                             <Button
                               data-testid={`buy-${pkg.coins}-coins-btn`}
                               className="w-full bg-yellow-500 hover:bg-yellow-600 rounded-full"
-                              disabled={loading}
+                              disabled={loading || processingPackage !== null}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (!loading) handlePurchase(pkg);
+                                if (!loading && !processingPackage) handlePurchase(pkg);
                               }}
                             >
-                              {loading ? 'Processing...' : 'Buy Now'}
+                              {processingPackage === pkg.coins ? 'Processing...' : 'Buy Now'}
                             </Button>
                           </CardContent>
                         </Card>
