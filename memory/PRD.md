@@ -41,6 +41,8 @@ User needed help deploying their GitHub repository (https://github.com/ankitameh
 - [x] All API endpoints tested and working
 - [x] OTP mock system working (use 123456 for testing)
 - [x] Payment mock system working
+- [x] **BUG FIX**: Fixed Razorpay amount changing on click - removed duplicate click handlers and added loading state prevention
+- [x] **ENHANCEMENT**: Added Razorpay config to show all banks including SBI in netbanking/UPI
 
 ## Deployment Status
 **Ready for Deployment** on Emergent Platform
