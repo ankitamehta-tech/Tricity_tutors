@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-01-24T09:39:16.563155",
+  "total_tests": 10,
+  "passed_tests": 10,
+  "success_rate": 100.0,
+  "results": [
+    {
+      "test": "Tutor Signup",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.175951"
+    },
+    {
+      "test": "Get Tutors List",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.215439"
+    },
+    {
+      "test": "Get Tutor Profile",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.259133"
+    },
+    {
+      "test": "Update Tutor Profile",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.309019"
+    },
+    {
+      "test": "OTP Verification (Mock)",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.349641"
+    },
+    {
+      "test": "Get Current User",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.390706"
+    },
+    {
+      "test": "Get Wallet",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.431861"
+    },
+    {
+      "test": "Purchase Coins (Mock)",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.482461"
+    },
+    {
+      "test": "Get Messages",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.522995"
+    },
+    {
+      "test": "Get Conversations",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-24T09:39:16.562337"
+    }
+  ]
+}
