@@ -40,7 +40,11 @@ export default function WalletPage({ user, setUser }) {
   };
 
   const handlePurchase = async (pkg) => {
+    // Prevent multiple clicks
+    if (loading || processingPackage) return;
+    
     setLoading(true);
+    setProcessingPackage(pkg.coins);
     try {
       const response = await api.post('/wallet/purchase', { package: pkg.coins });
       
@@ -72,6 +76,9 @@ export default function WalletPage({ user, setUser }) {
               loadWallet();
             } catch (error) {
               toast.error('Payment verification failed. Please contact support.');
+            } finally {
+              setLoading(false);
+              setProcessingPackage(null);
             }
           },
           prefill: {
@@ -84,6 +91,7 @@ export default function WalletPage({ user, setUser }) {
           modal: {
             ondismiss: function() {
               setLoading(false);
+              setProcessingPackage(null);
               toast.info('Payment cancelled');
             }
           }
@@ -100,11 +108,13 @@ export default function WalletPage({ user, setUser }) {
         
         setShowPurchaseModal(false);
         loadWallet();
+        setLoading(false);
+        setProcessingPackage(null);
       }
     } catch (error) {
       toast.error('Purchase failed. Please try again.');
-    } finally {
       setLoading(false);
+      setProcessingPackage(null);
     }
   };
 
