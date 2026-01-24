@@ -678,7 +678,7 @@ async def upload_profile_photo_file(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
-    """Upload profile photo file directly"""
+    """Upload profile photo file directly - stores as base64 in MongoDB"""
     if current_user["role"] != UserRole.TUTOR:
         raise HTTPException(status_code=403, detail="Access denied")
     
@@ -693,31 +693,20 @@ async def upload_profile_photo_file(
     # Read file content
     content = await file.read()
     
-    # Validate file size (max 30KB)
-    max_size = 30 * 1024  # 30KB in bytes
+    # Validate file size (max 100KB for base64 storage)
+    max_size = 100 * 1024  # 100KB in bytes
     if len(content) > max_size:
         raise HTTPException(
             status_code=400, 
-            detail="File too large. Maximum size is 30KB. Please compress your image."
+            detail="File too large. Maximum size is 100KB. Please compress your image."
         )
     
-    # Create uploads directory if it doesn't exist
-    uploads_dir = Path("/app/backend/uploads/profile_photos")
-    uploads_dir.mkdir(parents=True, exist_ok=True)
+    # Convert to base64 data URL
+    import base64
+    base64_data = base64.b64encode(content).decode('utf-8')
+    photo_url = f"data:{file.content_type};base64,{base64_data}"
     
-    # Generate unique filename
-    file_ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
-    unique_filename = f"{current_user['id']}_{uuid.uuid4().hex[:8]}.{file_ext}"
-    file_path = uploads_dir / unique_filename
-    
-    # Save file
-    with open(file_path, 'wb') as f:
-        f.write(content)
-    
-    # Generate URL for the uploaded file
-    photo_url = f"/api/uploads/profile_photos/{unique_filename}"
-    
-    # Update profile with new photo URL
+    # Update profile with base64 photo URL
     await db.tutor_profiles.update_one(
         {"user_id": current_user["id"]},
         {"$set": {"profile_photo": photo_url}}
@@ -728,16 +717,12 @@ async def upload_profile_photo_file(
         "photo_url": photo_url
     }
 
-# Serve uploaded files
-from fastapi.responses import FileResponse
-
 @api_router.get("/uploads/profile_photos/{filename}")
 async def get_profile_photo(filename: str):
-    """Serve uploaded profile photos"""
-    file_path = Path(f"/app/backend/uploads/profile_photos/{filename}")
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(file_path)
+    """Serve uploaded profile photos - legacy endpoint"""
+    # This endpoint is kept for backward compatibility
+    # New uploads use base64 stored in MongoDB
+    raise HTTPException(status_code=404, detail="File not found. Please re-upload your photo.")
 
 @api_router.get("/tutor/stats")
 async def get_tutor_stats(current_user: dict = Depends(get_current_user)):
