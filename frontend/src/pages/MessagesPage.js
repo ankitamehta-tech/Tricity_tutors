@@ -1,0 +1,213 @@
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { GraduationCap, Send, Coins } from 'lucide-react';
+import { toast } from 'sonner';
+import { api } from '@/utils/api';
+
+export default function MessagesPage({ user }) {
+  const location = useLocation();
+  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState({});
+  const [selectedUser, setSelectedUser] = useState(location.state?.recipientId || null);
+  const [newMessage, setNewMessage] = useState('');
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
+
+  useEffect(() => {
+    // If navigated with a recipient, select that conversation
+    if (location.state?.recipientId) {
+      setSelectedUser(location.state.recipientId);
+    }
+  }, [location.state]);
+
+  const loadMessages = async () => {
+    try {
+      const response = await api.get('/messages');
+      setMessages(response.data);
+      organizeConversations(response.data);
+    } catch (error) {
+      console.error('Failed to load messages:', error);
+    }
+  };
+
+  const organizeConversations = (messages) => {
+    const convos = {};
+    messages.forEach(msg => {
+      const otherUserId = msg.sender_id === user.id ? msg.recipient_id : msg.sender_id;
+      const otherUserName = msg.sender_id === user.id ? 'User' : msg.sender_name;
+      
+      if (!convos[otherUserId]) {
+        convos[otherUserId] = {
+          userId: otherUserId,
+          userName: otherUserName,
+          messages: []
+        };
+      }
+      convos[otherUserId].messages.push(msg);
+    });
+    
+    Object.keys(convos).forEach(key => {
+      convos[key].messages.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    });
+    
+    setConversations(convos);
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedUser) return;
+    
+    try {
+      await api.post('/messages', {
+        recipient_id: selectedUser,
+        message: newMessage
+      });
+      setNewMessage('');
+      toast.success('Message sent!');
+      loadMessages();
+    } catch (error) {
+      if (error.response?.status === 402) {
+        toast.error(error.response?.data?.detail || 'Insufficient coins. Please purchase coins first.');
+      } else {
+        toast.error('Failed to send message');
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="backdrop-blur-xl bg-white/70 border-b border-white/20 sticky top-0 z-50">
+        <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3">
+            <GraduationCap className="w-8 h-8 text-indigo-600" />
+            <span className="text-2xl font-outfit font-bold">Tricity Tutors</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/wallet">
+              <Button data-testid="messages-wallet-btn" variant="outline" className="rounded-full flex items-center gap-2">
+                <Coins className="w-4 h-4 text-yellow-600" />
+                <span className="font-semibold">{user?.coins || 0}</span>
+              </Button>
+            </Link>
+            <Link to={user?.role === 'tutor' ? '/tutor/dashboard' : '/student/dashboard'}>
+              <Button data-testid="messages-back-btn" variant="outline" className="rounded-full">
+                Back to Dashboard
+              </Button>
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <h1 className="text-4xl font-outfit font-bold mb-8">Messages</h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Conversations List */}
+          <Card className="md:col-span-1">
+            <CardHeader>
+              <CardTitle>Conversations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {Object.keys(conversations).length === 0 ? (
+                  <p className="text-center text-muted-foreground py-8 text-sm">No messages yet</p>
+                ) : (
+                  Object.values(conversations).map((convo) => (
+                    <button
+                      key={convo.userId}
+                      data-testid={`conversation-${convo.userId}-btn`}
+                      onClick={() => setSelectedUser(convo.userId)}
+                      className={`w-full p-3 rounded-lg text-left transition-colors ${
+                        selectedUser === convo.userId
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-accent'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarFallback>{convo.userName[0]}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold truncate">{convo.userName}</p>
+                          <p className="text-sm truncate opacity-75">
+                            {convo.messages[convo.messages.length - 1]?.message}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Messages Display */}
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>
+                {selectedUser && conversations[selectedUser]
+                  ? conversations[selectedUser].userName
+                  : 'Select a conversation'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedUser && conversations[selectedUser] ? (
+                <div className="space-y-6">
+                  {/* Messages */}
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {conversations[selectedUser].messages.map((msg) => (
+                      <div
+                        key={msg.id}
+                        className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-xs p-3 rounded-lg ${
+                            msg.sender_id === user.id
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-accent'
+                          }`}
+                        >
+                          <p className="text-sm">{msg.message}</p>
+                          <p className="text-xs opacity-70 mt-1">
+                            {new Date(msg.created_at).toLocaleTimeString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Send Message Form */}
+                  <form onSubmit={handleSendMessage} className="flex gap-2">
+                    <Textarea
+                      data-testid="message-input"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type your message..."
+                      rows={2}
+                      className="flex-1"
+                    />
+                    <Button data-testid="send-message-btn" type="submit" className="rounded-full">
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </form>
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-12">
+                  Select a conversation to view messages
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
