@@ -11,6 +11,10 @@ import BrowseTutors from '@/pages/BrowseTutors';
 import WalletPage from '@/pages/WalletPage';
 import JobsPage from '@/pages/JobsPage';
 import MessagesPage from '@/pages/MessagesPage';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsConditions from '@/pages/TermsConditions';
+import RefundPolicy from '@/pages/RefundPolicy';
+import ContactUs from '@/pages/ContactUs';
 import { useState, useEffect } from 'react';
 import '@/App.css';
 
