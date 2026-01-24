@@ -15,25 +15,11 @@ export default function LandingPage({ user }) {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <Button
-                  data-testid="dashboard-btn"
-                  onClick={() => window.location.href = user.role === 'tutor' ? '/tutor/dashboard' : '/student/dashboard'}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 rounded-full font-semibold shadow-lg shadow-indigo-500/20 btn-hover"
-                >
-                  Dashboard
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/auth">
-                  <Button data-testid="get-started-btn" className="bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 rounded-full font-semibold shadow-lg shadow-indigo-500/20 btn-hover">
-                    Get Started
-                  </Button>
-                </Link>
-              </>
-            )}
+            <Link to="/auth">
+              <Button data-testid="get-started-btn" className="bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 rounded-full font-semibold shadow-lg shadow-indigo-500/20 btn-hover">
+                Get Started
+              </Button>
+            </Link>
           </div>
         </nav>
       </header>
