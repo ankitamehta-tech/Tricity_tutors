@@ -85,6 +85,23 @@ export default function WalletPage({ user, setUser }) {
             name: user?.name || '',
             email: user?.email || '',
           },
+          config: {
+            display: {
+              blocks: {
+                banks: {
+                  name: "All Banks",
+                  instruments: [
+                    { method: "netbanking" },
+                    { method: "upi" }
+                  ]
+                }
+              },
+              sequence: ["block.banks"],
+              preferences: {
+                show_default_blocks: true
+              }
+            }
+          },
           theme: {
             color: '#4F46E5'
           },
