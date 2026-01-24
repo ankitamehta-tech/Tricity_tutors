@@ -713,7 +713,7 @@ export default function TutorDashboard({ user, setUser }) {
                         Upload Profile Photo
                       </DialogTitle>
                       <DialogDescription>
-                        Upload a photo from your device (Max 30KB, JPG/PNG/WebP)
+                        Upload a photo from your device (Max 100KB, JPG/PNG/WebP)
                       </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
