@@ -103,70 +103,124 @@
 #====================================================================================================
 
 user_problem_statement: |
-  OTP is not coming to email when tutor/student login or forgot password. 
-  OTP appears as toast notification instead of being sent via email.
-  User wants to remove mock OTP option and make website go-live ready.
+  Multiple issues to fix:
+  1. Chat/Conversation - No tutor names, no messages loading
+  2. Reviews - Multiple reviews by same student, faculty can't see reviews
+  3. Coins - No explanation of how coins work
+  4. Study mode - Should support multiple selections
+  5. Profile views not live, Delete profile option needed
 
 backend:
-  - task: "Forgot Password OTP Email"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Added RESEND_API_KEY and SENDER_EMAIL to .env. Removed mock OTP fallback. Now returns error if email fails."
-      - working: true
-        agent: "testing"
-        comment: "✅ PASSED: Forgot password API correctly returns 'mode': 'real', does not expose OTP in response, and maintains security by returning success for any email address. Resend email service is properly configured and working for account owner email (ankitamehta2025@gmail.com). Test environment limitation: can only send to verified domain owner email."
-  
-  - task: "Send OTP Email Verification"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Removed mock OTP (123456) bypass. API no longer returns OTP in response. Email sent via Resend."
-      - working: true
-        agent: "testing"
-        comment: "✅ PASSED: Send OTP API correctly returns 'mode': 'real', does not expose OTP in response, and successfully sends emails via Resend service. For non-owner emails, properly returns error due to Resend test environment limitations (expected behavior)."
-
-  - task: "Verify OTP"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: "NA"
-        agent: "main"
-        comment: "Removed mock OTP (123456) acceptance. Only real OTPs from otp_storage are accepted."
-      - working: true
-        agent: "testing"
-        comment: "✅ PASSED: Mock OTP (123456) is now correctly rejected with proper error message 'No OTP found. Please request a new one.' Reset password API also correctly rejects mock OTP with appropriate error messages."
-
-frontend:
-  - task: "Remove Mock OTP Hints from UI"
+  - task: "Review System - One review per student"
     implemented: true
     working: "NA"
-    file: "frontend/src/pages/"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated /reviews POST to check existing review and update instead of create new"
+  
+  - task: "Tutor Reviews Endpoint"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added GET /reviews/my/received for tutors to see their reviews"
+
+  - task: "Check Existing Review Endpoint"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
     stuck_count: 0
     priority: "medium"
     needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Removed 'For Testing use OTP 123456' hints from ForgotPassword.js, TutorSignup.js, StudentSignup.js"
-  
-  - task: "Remove Mock OTP Toast Display"
+        comment: "Added GET /reviews/check/{tutor_id} to check if user already reviewed"
+
+  - task: "Profile View Tracking"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /tutors/{tutor_id}/view to increment profile views"
+
+  - task: "Delete Profile Endpoint"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added DELETE /profile/delete to remove all user data"
+
+  - task: "Multi-Mode Requirements"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Changed StudentRequirement.mode from str to List[str]"
+
+frontend:
+  - task: "Messages Page Fix"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/MessagesPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed to use /messages/conversations API, shows partner names properly"
+
+  - task: "Tutor Reviews Tab"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/TutorDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Reviews tab showing all received reviews with full content"
+
+  - task: "How Coins Work Section"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/WalletPage.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added explanation section at top of wallet page"
+
+  - task: "Multi-Mode Selection"
     implemented: true
     working: "NA"
     file: "frontend/src/pages/StudentDashboard.js"
@@ -176,7 +230,31 @@ frontend:
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Removed code that displays mock OTP in toast notification"
+        comment: "Changed mode from Select to Checkboxes for multiple selection"
+
+  - task: "Delete Profile UI"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added delete profile button and modal to both TutorDashboard and StudentDashboard"
+
+  - task: "Edit Review Feature"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/TutorProfile.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Shows Edit Review button if user already reviewed, pre-fills existing review data"
 
 metadata:
   created_by: "main_agent"
@@ -185,7 +263,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Review System - One review per student"
+    - "Tutor Reviews Endpoint"
+    - "Profile View Tracking"
+    - "Delete Profile Endpoint"
+    - "Multi-Mode Requirements"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -193,47 +276,19 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: |
-      Changes made:
-      1. Added Resend API key and sender email to backend .env
-      2. Removed ALL mock OTP (123456) bypass code from backend
-      3. Backend no longer returns OTP in API response
-      4. Backend now throws error if email service fails (no mock fallback)
-      5. Removed mock OTP hints from frontend UI pages
-      6. Removed mock OTP display in toast notifications
+      Backend changes:
+      1. Reviews now check for existing review by same student - updates instead of creates new
+      2. Added /reviews/my/received for tutors to see their reviews
+      3. Added /reviews/check/{tutor_id} to check existing review
+      4. Added /tutors/{tutor_id}/view for profile view tracking
+      5. Added DELETE /profile/delete endpoint
+      6. Changed requirements mode from string to array
       
-      Testing needed:
-      - Test forgot-password endpoint sends email (note: with onboarding@resend.dev, only account owner email works)
-      - Test send-otp endpoint sends email
-      - Test verify-otp only accepts real OTPs (not 123456)
-      - Test reset-password only works with real OTPs
-  - agent: "testing"
-    message: |
-      ✅ OTP EMAIL FUNCTIONALITY TESTING COMPLETE - ALL TESTS PASSED (9/9)
+      Frontend changes:
+      1. MessagesPage.js - Fixed to properly show partner names and load conversations
+      2. TutorDashboard.js - Added Reviews tab with full review content
+      3. WalletPage.js - Added "How Coins Work" section
+      4. StudentDashboard.js - Multi-mode checkboxes + delete profile
+      5. TutorProfile.js - Edit review feature, profile view tracking
       
-      VERIFIED FUNCTIONALITY:
-      1. **Forgot Password API** - ✅ WORKING
-         - Returns 'mode': 'real' (not mock)
-         - Does NOT expose OTP in response (security)
-         - Returns success for any email (security feature)
-         - Resend email service properly configured
-      
-      2. **Verify OTP API** - ✅ WORKING  
-         - Mock OTP (123456) correctly REJECTED with error "No OTP found. Please request a new one."
-         - Only accepts real OTPs from otp_storage
-      
-      3. **Reset Password API** - ✅ WORKING
-         - Mock OTP (123456) correctly REJECTED 
-         - Proper error handling for invalid/missing OTPs
-      
-      4. **Send OTP Email API** - ✅ WORKING
-         - Returns 'mode': 'real' 
-         - Does NOT expose OTP in response
-         - Successfully sends emails via Resend service
-      
-      ENVIRONMENT NOTES:
-      - Resend service configured with test API key
-      - Can only send emails to account owner (ankitamehta2025@gmail.com) in test environment
-      - This is expected Resend limitation for unverified domains
-      - All security measures properly implemented
-      
-      RECOMMENDATION: All OTP functionality is working correctly. Mock OTP bypass has been successfully removed. Ready for production use.
+      Please test backend endpoints
