@@ -23,11 +23,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       const response = await axios.post(`${API}/auth/forgot-password`, { email });
-      if (response.data.mode === 'mock') {
-        toast.success(`OTP sent! Mock OTP: ${response.data.otp}`);
-      } else {
-        toast.success('Password reset OTP sent to your email!');
-      }
+      toast.success('Password reset OTP sent to your email!');
       setStep(2);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to send OTP');
@@ -116,7 +112,7 @@ export default function ForgotPassword() {
                   OTP sent to <strong>{email}</strong>
                 </p>
                 <p className="text-xs text-green-700 mt-1">
-                  For testing, use mock OTP: <strong>123456</strong>
+                  Please check your email inbox (and spam folder) for the OTP.
                 </p>
               </div>
               
