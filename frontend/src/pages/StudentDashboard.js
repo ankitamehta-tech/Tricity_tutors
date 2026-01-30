@@ -44,10 +44,11 @@ export default function StudentDashboard({ user, setUser }) {
   const [emailOTP, setEmailOTP] = useState('');
   const [phoneOTP, setPhoneOTP] = useState('');
   const [currentUser, setCurrentUser] = useState(user);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [requirementData, setRequirementData] = useState({
     subject: '',
     level_class: '',
-    mode: 'Online',
+    mode: [],  // Changed to array for multiple selections
     requirement_type: 'Tuition',
     gender_preference: 'Any',
     time_preference: 'Part Time',
