@@ -384,17 +384,42 @@ export default function StudentDashboard({ user, setUser }) {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label>Mode</Label>
-                    <Select value={requirementData.mode} onValueChange={(value) => setRequirementData({ ...requirementData, mode: value })}>
-                      <SelectTrigger data-testid="req-mode-select" className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Online">Online</SelectItem>
-                        <SelectItem value="Home">Home Tuition</SelectItem>
-                        <SelectItem value="I can travel">I can travel to tutor</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label>Study Mode * (Select all that apply)</Label>
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="mode-online"
+                          checked={requirementData.mode.includes('Online')}
+                          onCheckedChange={(checked) => handleModeChange('Online', checked)}
+                        />
+                        <label htmlFor="mode-online" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Online Classes
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="mode-home"
+                          checked={requirementData.mode.includes('Home')}
+                          onCheckedChange={(checked) => handleModeChange('Home', checked)}
+                        />
+                        <label htmlFor="mode-home" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Home Tuition (Tutor visits me)
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="mode-travel"
+                          checked={requirementData.mode.includes('I can travel')}
+                          onCheckedChange={(checked) => handleModeChange('I can travel', checked)}
+                        />
+                        <label htmlFor="mode-travel" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          I can travel to tutor
+                        </label>
+                      </div>
+                    </div>
+                    {requirementData.mode.length === 0 && (
+                      <p className="text-xs text-red-500 mt-1">Please select at least one mode</p>
+                    )}
                   </div>
                   <div>
                     <Label>Requirement Type</Label>
