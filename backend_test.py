@@ -386,6 +386,28 @@ class TricityTutorsAPITester:
         
         return success
 
+    def run_otp_focused_tests(self):
+        """Run OTP-focused tests as requested in review"""
+        print("🚀 Starting OTP Email Functionality Tests")
+        print(f"📍 Base URL: {self.base_url}")
+        print("=" * 60)
+        
+        # Test the specific OTP functionality
+        test_results = []
+        
+        print("\n📧 Testing OTP Email Functionality...")
+        test_results.append(self.test_forgot_password_api())
+        test_results.append(self.test_verify_otp_mock_rejection())
+        test_results.append(self.test_reset_password_mock_rejection())
+        test_results.append(self.test_send_otp_email_api())
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print(f"📊 OTP Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
+        print(f"✅ Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
+        
+        return all(test_results)
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Tricity Tutors API Tests")
@@ -402,7 +424,6 @@ class TricityTutorsAPITester:
         # Test other APIs
         self.test_get_tutors()
         self.test_tutor_profile_operations()
-        self.test_otp_verification()
         self.test_current_user()
         self.test_wallet_operations()
         self.test_messaging_system()
