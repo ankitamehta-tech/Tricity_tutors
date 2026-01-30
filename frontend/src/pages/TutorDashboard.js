@@ -62,7 +62,10 @@ export default function TutorDashboard({ user, setUser }) {
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [photoInputUrl, setPhotoInputUrl] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [reviews, setReviews] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = require('react-router-dom').useNavigate();
 
   useEffect(() => {
     loadProfile();
@@ -70,6 +73,7 @@ export default function TutorDashboard({ user, setUser }) {
     loadMessages();
     loadConversations();
     loadRequirements();
+    loadReviews();
   }, []);
 
   useEffect(() => {
@@ -125,6 +129,27 @@ export default function TutorDashboard({ user, setUser }) {
       setRequirements(response.data.slice(0, 10));
     } catch (error) {
       console.error('Failed to load requirements:', error);
+    }
+  };
+
+  const loadReviews = async () => {
+    try {
+      const response = await api.get('/reviews/my/received');
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Failed to load reviews:', error);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    try {
+      await api.delete('/profile/delete');
+      toast.success('Profile deleted successfully');
+      logout();
+      setUser(null);
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to delete profile');
     }
   };
 
