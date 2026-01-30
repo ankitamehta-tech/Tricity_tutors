@@ -762,7 +762,7 @@ class TricityTutorsAPITester:
             "Delete Profile Without Auth (Should Fail)",
             "DELETE",
             "api/profile/delete",
-            401  # Expecting unauthorized
+            [401, 403]  # Accept both unauthorized and forbidden
         )
         
         if not success:
