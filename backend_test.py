@@ -932,8 +932,8 @@ class TricityTutorsAPITester:
 def main():
     tester = TricityTutorsAPITester()
     
-    # Run OTP-focused tests as requested in review
-    success = tester.run_otp_focused_tests()
+    # Run new endpoint tests as requested in review
+    success = tester.run_new_endpoint_tests()
     
     # Create test reports directory if it doesn't exist
     import os
