@@ -490,27 +490,34 @@ class TricityTutorsAPITester:
         """Test review system - one review per student with update functionality"""
         print("\n🔍 Testing Review System - One Review Per Student...")
         
-        # First, create a student account
-        student_token, student_id = self.test_student_signup()
-        if not student_token:
-            # Try login if signup failed
-            login_data = {
-                "email": "teststudent@example.com",
-                "password": "Test123!@#"
-            }
-            success, response = self.run_test(
-                "Student Login for Review Test",
-                "POST",
-                "api/auth/login",
-                200,
-                data=login_data
-            )
-            if success and 'token' in response:
-                student_token = response['token']
-                student_id = response['user']['id']
-            else:
-                self.log_test("Review System Setup", False, "Could not create/login student")
-                return False
+        # Create unique test users for this test
+        import time
+        timestamp = str(int(time.time()))
+        
+        # Create a fresh student account
+        student_email = f"teststudent{timestamp}@example.com"
+        signup_data = {
+            "email": student_email,
+            "password": "Test123!@#",
+            "role": "student",
+            "name": "Test Student",
+            "mobile": f"987654{timestamp[-4:]}"
+        }
+        
+        success, response = self.run_test(
+            "Create Fresh Student for Review Test",
+            "POST",
+            "api/auth/signup",
+            200,
+            data=signup_data
+        )
+        
+        if not success or 'token' not in response:
+            self.log_test("Review System Setup", False, "Could not create fresh student")
+            return False
+        
+        student_token = response['token']
+        student_id = response['user']['id']
         
         # Get a tutor ID (use the existing tutor from previous tests)
         tutor_id = None
@@ -532,7 +539,7 @@ class TricityTutorsAPITester:
         original_token = self.token
         self.token = student_token
         
-        # First review
+        # First review - should create new
         first_review_data = {
             "tutor_id": tutor_id,
             "rating": 4,
@@ -556,6 +563,8 @@ class TricityTutorsAPITester:
             self.log_test("First Review Response", False, f"Expected 'updated': false, got: {response}")
             self.token = original_token
             return False
+        
+        print("   ✅ First review created successfully with 'updated': false")
         
         # Second review with same tutor (should update)
         second_review_data = {
@@ -582,7 +591,7 @@ class TricityTutorsAPITester:
             self.token = original_token
             return False
         
-        print("   ✅ Review system correctly updates existing review instead of creating new one")
+        print("   ✅ Review system correctly updates existing review with 'updated': true")
         
         # Restore original token
         self.token = original_token
