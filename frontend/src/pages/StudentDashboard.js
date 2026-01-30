@@ -167,7 +167,7 @@ export default function StudentDashboard({ user, setUser }) {
       setRequirementData({
         subject: '',
         level_class: '',
-        mode: 'Online',
+        mode: [],
         requirement_type: 'Tuition',
         gender_preference: 'Any',
         time_preference: 'Part Time',
@@ -194,6 +194,26 @@ export default function StudentDashboard({ user, setUser }) {
       loadMyRequirements();
     } catch (error) {
       toast.error('Failed to close requirement');
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    try {
+      await api.delete('/profile/delete');
+      toast.success('Profile deleted successfully');
+      logout();
+      setUser(null);
+      navigate('/');
+    } catch (error) {
+      toast.error('Failed to delete profile');
+    }
+  };
+
+  const handleModeChange = (mode, checked) => {
+    if (checked) {
+      setRequirementData({ ...requirementData, mode: [...requirementData.mode, mode] });
+    } else {
+      setRequirementData({ ...requirementData, mode: requirementData.mode.filter(m => m !== mode) });
     }
   };
 
