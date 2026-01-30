@@ -1,44 +1,56 @@
 {
-  "timestamp": "2026-01-30T15:53:07.249878",
-  "total_tests": 6,
+  "timestamp": "2026-01-30T15:53:54.912832",
+  "total_tests": 8,
   "passed_tests": 5,
-  "success_rate": 83.33333333333334,
+  "success_rate": 62.5,
   "results": [
     {
       "test": "Forgot Password - Registered Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:53:05.607770"
+      "timestamp": "2026-01-30T15:53:52.506678"
     },
     {
       "test": "Forgot Password - Non-registered Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:53:05.876113"
+      "timestamp": "2026-01-30T15:53:52.773369"
     },
     {
       "test": "Verify OTP - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:53:05.917134"
+      "timestamp": "2026-01-30T15:53:52.812649"
     },
     {
       "test": "Reset Password - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:53:05.957838"
+      "timestamp": "2026-01-30T15:53:52.891478"
     },
     {
       "test": "Create Test User for OTP",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-30T15:53:06.705955"
+      "success": false,
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T15:53:53.160349"
     },
     {
-      "test": "Send OTP Email",
+      "test": "Send OTP Email - Valid Email",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T15:53:53.632400"
+    },
+    {
+      "test": "Create Test User for Email Limitation Test",
       "success": false,
-      "details": "Expected 200, got 520 - {'detail': 'Failed to send OTP email. Please try again later.'}",
-      "timestamp": "2026-01-30T15:53:07.248847"
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T15:53:54.401447"
+    },
+    {
+      "test": "Send OTP Email - Non-owner Email (Expected to Fail)",
+      "success": false,
+      "details": "Expected 500, got 520 - {'detail': 'Failed to send OTP email. Please try again later.'}",
+      "timestamp": "2026-01-30T15:53:54.911949"
     }
   ]
 }
