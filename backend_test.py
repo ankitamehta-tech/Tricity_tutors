@@ -443,6 +443,7 @@ class TricityTutorsAPITester:
         test_results.append(self.test_verify_otp_mock_rejection())
         test_results.append(self.test_reset_password_mock_rejection())
         test_results.append(self.test_send_otp_email_api())
+        test_results.append(self.test_email_service_limitation())
         
         # Print summary
         print("\n" + "=" * 60)
