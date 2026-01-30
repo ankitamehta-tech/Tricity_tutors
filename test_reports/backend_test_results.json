@@ -1,62 +1,116 @@
 {
-  "timestamp": "2026-01-30T15:54:54.595625",
-  "total_tests": 9,
-  "passed_tests": 9,
-  "success_rate": 100.0,
+  "timestamp": "2026-01-30T16:36:01.067321",
+  "total_tests": 18,
+  "passed_tests": 14,
+  "success_rate": 77.77777777777779,
   "results": [
     {
-      "test": "Forgot Password - Account Owner Email",
+      "test": "Tutor Signup",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:52.258691"
+      "timestamp": "2026-01-30T16:35:52.609867"
     },
     {
-      "test": "Forgot Password - Test Email",
+      "test": "Student Signup",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:52.529667"
+      "timestamp": "2026-01-30T16:35:53.331915"
     },
     {
-      "test": "Forgot Password - Non-registered Email",
+      "test": "Get Current Tutor for Review Test",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:52.832008"
+      "timestamp": "2026-01-30T16:35:53.596316"
     },
     {
-      "test": "Verify OTP - Mock OTP Should Fail",
+      "test": "Create First Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:52.868642"
+      "timestamp": "2026-01-30T16:35:54.790292"
     },
     {
-      "test": "Reset Password - Mock OTP Should Fail",
+      "test": "Update Existing Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:52.904177"
+      "timestamp": "2026-01-30T16:35:56.227295"
     },
     {
-      "test": "Create Test User for OTP (Optional)",
+      "test": "Get My Received Reviews",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:53.170101"
+      "timestamp": "2026-01-30T16:35:56.720819"
     },
     {
-      "test": "Send OTP Email - Valid Email",
+      "test": "Get Current User for Review Check",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:53.670279"
+      "timestamp": "2026-01-30T16:35:56.988156"
     },
     {
-      "test": "Create Test User for Email Limitation Test (Optional)",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-30T15:54:53.931329"
+      "test": "Student Signup",
+      "success": false,
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T16:35:57.254150"
     },
     {
-      "test": "Send OTP Email - Non-owner Email (Expected to Fail)",
+      "test": "Student Login for Check Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:54.594566"
+      "timestamp": "2026-01-30T16:35:57.976502"
+    },
+    {
+      "test": "Check Existing Review",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:35:58.469348"
+    },
+    {
+      "test": "Get Current User for View Tracking",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:35:58.733274"
+    },
+    {
+      "test": "Track Profile View",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:35:59.004696"
+    },
+    {
+      "test": "Create User for Deletion Test",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:35:59.761917"
+    },
+    {
+      "test": "Delete Profile Without Auth (Should Fail)",
+      "success": false,
+      "details": "Expected 401, got 403 - {'detail': 'Not authenticated'}",
+      "timestamp": "2026-01-30T16:35:59.795042"
+    },
+    {
+      "test": "Delete Profile Auth Check",
+      "success": false,
+      "details": "Delete should require authentication",
+      "timestamp": "2026-01-30T16:35:59.795577"
+    },
+    {
+      "test": "Student Signup",
+      "success": false,
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T16:36:00.083710"
+    },
+    {
+      "test": "Student Login for Requirements",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:36:00.802428"
+    },
+    {
+      "test": "Create Requirement with Multi-Mode",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:36:01.066401"
     }
   ]
 }
