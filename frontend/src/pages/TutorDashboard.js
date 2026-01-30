@@ -65,7 +65,7 @@ export default function TutorDashboard({ user, setUser }) {
   const [reviews, setReviews] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const messagesEndRef = useRef(null);
-  const navigate = require('react-router-dom').useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadProfile();
