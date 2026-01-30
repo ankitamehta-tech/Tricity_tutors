@@ -1008,9 +1008,49 @@ export default function TutorDashboard({ user, setUser }) {
                     <Star className="w-4 h-4 mr-2" />
                     View Reviews ({reviews.length})
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Profile
+                  </Button>
                 </div>
               </CardContent>
             </Card>
+
+            {/* Delete Profile Modal */}
+            <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-red-600">
+                    <AlertTriangle className="w-5 h-5" />
+                    Delete Profile
+                  </DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete your profile? This action cannot be undone.
+                    All your data including messages, reviews, and profile information will be permanently deleted.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex gap-3 mt-4">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    className="flex-1"
+                    onClick={handleDeleteProfile}
+                  >
+                    Delete Permanently
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {/* Quick Tips */}
             <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-0 shadow-sm">
