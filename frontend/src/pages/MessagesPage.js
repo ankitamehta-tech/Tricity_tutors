@@ -121,28 +121,37 @@ export default function MessagesPage({ user }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {Object.keys(conversations).length === 0 ? (
+                {loading ? (
+                  <p className="text-center text-muted-foreground py-8 text-sm">Loading...</p>
+                ) : conversations.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8 text-sm">No messages yet</p>
                 ) : (
-                  Object.values(conversations).map((convo) => (
+                  conversations.map((convo) => (
                     <button
-                      key={convo.userId}
-                      data-testid={`conversation-${convo.userId}-btn`}
-                      onClick={() => setSelectedUser(convo.userId)}
+                      key={convo.partner_id}
+                      data-testid={`conversation-${convo.partner_id}-btn`}
+                      onClick={() => handleSelectConversation(convo.partner_id)}
                       className={`w-full p-3 rounded-lg text-left transition-colors ${
-                        selectedUser === convo.userId
+                        selectedUser === convo.partner_id
                           ? 'bg-primary text-primary-foreground'
                           : 'hover:bg-accent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarFallback>{convo.userName[0]}</AvatarFallback>
+                          <AvatarFallback>{convo.partner_name?.[0] || '?'}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold truncate">{convo.userName}</p>
+                          <div className="flex items-center justify-between">
+                            <p className="font-semibold truncate">{convo.partner_name || 'Unknown'}</p>
+                            {convo.unread_count > 0 && (
+                              <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                                {convo.unread_count}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm truncate opacity-75">
-                            {convo.messages[convo.messages.length - 1]?.message}
+                            {convo.last_message}
                           </p>
                         </div>
                       </div>
@@ -157,17 +166,17 @@ export default function MessagesPage({ user }) {
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>
-                {selectedUser && conversations[selectedUser]
-                  ? conversations[selectedUser].userName
+                {selectedConversation?.partner
+                  ? selectedConversation.partner.name
                   : 'Select a conversation'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {selectedUser && conversations[selectedUser] ? (
+              {selectedConversation ? (
                 <div className="space-y-6">
                   {/* Messages */}
                   <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {conversations[selectedUser].messages.map((msg) => (
+                    {selectedConversation.messages.map((msg) => (
                       <div
                         key={msg.id}
                         className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}
@@ -186,6 +195,7 @@ export default function MessagesPage({ user }) {
                         </div>
                       </div>
                     ))}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Send Message Form */}
