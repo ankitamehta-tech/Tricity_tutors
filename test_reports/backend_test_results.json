@@ -1,116 +1,134 @@
 {
-  "timestamp": "2026-01-30T16:36:01.067321",
-  "total_tests": 18,
-  "passed_tests": 14,
-  "success_rate": 77.77777777777779,
+  "timestamp": "2026-01-30T16:36:24.179877",
+  "total_tests": 21,
+  "passed_tests": 16,
+  "success_rate": 76.19047619047619,
   "results": [
     {
       "test": "Tutor Signup",
+      "success": false,
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T16:36:14.246771"
+    },
+    {
+      "test": "Login",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:52.609867"
+      "timestamp": "2026-01-30T16:36:14.968817"
     },
     {
       "test": "Student Signup",
+      "success": false,
+      "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
+      "timestamp": "2026-01-30T16:36:15.234411"
+    },
+    {
+      "test": "Student Login for Review Test",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:53.331915"
+      "timestamp": "2026-01-30T16:36:15.969229"
     },
     {
       "test": "Get Current Tutor for Review Test",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:53.596316"
+      "timestamp": "2026-01-30T16:36:16.235525"
     },
     {
       "test": "Create First Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:54.790292"
+      "timestamp": "2026-01-30T16:36:17.656543"
     },
     {
-      "test": "Update Existing Review",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-30T16:35:56.227295"
+      "test": "First Review Response",
+      "success": false,
+      "details": "Expected 'updated': false, got: {'message': 'Review updated successfully', 'id': '13ee5916-223a-4cfd-a72c-41ee098b997b', 'updated': True}",
+      "timestamp": "2026-01-30T16:36:17.657233"
     },
     {
       "test": "Get My Received Reviews",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:56.720819"
+      "timestamp": "2026-01-30T16:36:18.152666"
     },
     {
       "test": "Get Current User for Review Check",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:56.988156"
+      "timestamp": "2026-01-30T16:36:18.423705"
     },
     {
       "test": "Student Signup",
       "success": false,
       "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
-      "timestamp": "2026-01-30T16:35:57.254150"
+      "timestamp": "2026-01-30T16:36:18.730715"
     },
     {
       "test": "Student Login for Check Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:57.976502"
+      "timestamp": "2026-01-30T16:36:19.446022"
     },
     {
       "test": "Check Existing Review",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:58.469348"
+      "timestamp": "2026-01-30T16:36:19.958185"
     },
     {
       "test": "Get Current User for View Tracking",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:58.733274"
+      "timestamp": "2026-01-30T16:36:20.231259"
     },
     {
       "test": "Track Profile View",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:59.004696"
+      "timestamp": "2026-01-30T16:36:20.499620"
     },
     {
       "test": "Create User for Deletion Test",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:35:59.761917"
+      "timestamp": "2026-01-30T16:36:20.764661"
+    },
+    {
+      "test": "Login User for Deletion Test",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:36:21.484122"
     },
     {
       "test": "Delete Profile Without Auth (Should Fail)",
-      "success": false,
-      "details": "Expected 401, got 403 - {'detail': 'Not authenticated'}",
-      "timestamp": "2026-01-30T16:35:59.795042"
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:36:21.517506"
     },
     {
-      "test": "Delete Profile Auth Check",
-      "success": false,
-      "details": "Delete should require authentication",
-      "timestamp": "2026-01-30T16:35:59.795577"
+      "test": "Delete Profile With Auth",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T16:36:22.928201"
     },
     {
       "test": "Student Signup",
       "success": false,
       "details": "Expected 200, got 400 - {'detail': 'Email already registered'}",
-      "timestamp": "2026-01-30T16:36:00.083710"
+      "timestamp": "2026-01-30T16:36:23.189651"
     },
     {
       "test": "Student Login for Requirements",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:36:00.802428"
+      "timestamp": "2026-01-30T16:36:23.914320"
     },
     {
       "test": "Create Requirement with Multi-Mode",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T16:36:01.066401"
+      "timestamp": "2026-01-30T16:36:24.178955"
     }
   ]
 }
