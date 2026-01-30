@@ -159,6 +159,48 @@ export default function WalletPage({ user, setUser }) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* How Coins Work - NEW SECTION */}
+          <div className="lg:col-span-3 mb-4">
+            <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-indigo-700">
+                  <Coins className="w-6 h-6" />
+                  How Coins Work
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">1</div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Buy Coins</h3>
+                      <p className="text-sm text-gray-600">Purchase coin packages using UPI, Cards, or Net Banking. More coins = better value!</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">2</div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Contact Tutors</h3>
+                      <p className="text-sm text-gray-600">
+                        <strong>100 coins</strong> - Message a tutor<br/>
+                        <strong>100 coins</strong> - Unlock phone number
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">3</div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">For Tutors</h3>
+                      <p className="text-sm text-gray-600">
+                        <strong>200 coins</strong> - View student requirement details & contact
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Wallet Balance */}
           <div className="lg:col-span-1">
             <Card className="bg-gradient-to-br from-yellow-400 to-orange-500 text-white border-0 shadow-xl">
