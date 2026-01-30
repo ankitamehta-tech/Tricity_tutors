@@ -709,6 +709,64 @@ export default function TutorDashboard({ user, setUser }) {
                 </CardContent>
               </Card>
             )}
+
+            {activeTab === 'reviews' && (
+              <Card className="bg-white border-0 shadow-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-500" />
+                    My Reviews ({reviews.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {reviews.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <Star className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                      <p>No reviews yet</p>
+                      <p className="text-sm mt-2">Reviews from students will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {reviews.map((review) => (
+                        <div key={review.id} className="p-4 border rounded-lg bg-gray-50">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <p className="font-semibold text-gray-900">{review.student_name}</p>
+                              <div className="flex items-center gap-1 mt-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`w-4 h-4 ${
+                                      i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                                    }`}
+                                  />
+                                ))}
+                                <span className="ml-2 text-sm text-gray-500">
+                                  {review.rating}/5
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-sm text-gray-500">
+                              {new Date(review.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-gray-700 mt-3">{review.comment}</p>
+                          {review.updated_at && (
+                            <p className="text-xs text-gray-400 mt-2">
+                              (Updated: {new Date(review.updated_at).toLocaleDateString()})
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right Sidebar - Profile Card */}
