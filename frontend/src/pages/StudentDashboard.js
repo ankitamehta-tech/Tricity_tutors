@@ -654,6 +654,61 @@ export default function StudentDashboard({ user, setUser }) {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Delete Profile Section */}
+        <Card className="mt-8 border-red-200">
+          <CardHeader>
+            <CardTitle className="text-red-600 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Danger Zone
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 mb-4">
+              Once you delete your profile, all your data will be permanently removed. This action cannot be undone.
+            </p>
+            <Button 
+              variant="outline" 
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete My Profile
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Delete Profile Modal */}
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-600">
+                <AlertTriangle className="w-5 h-5" />
+                Delete Profile
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete your profile? This action cannot be undone.
+                All your requirements, messages, and profile information will be permanently deleted.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 mt-4">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="flex-1"
+                onClick={handleDeleteProfile}
+              >
+                Delete Permanently
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
