@@ -101,3 +101,102 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  OTP is not coming to email when tutor/student login or forgot password. 
+  OTP appears as toast notification instead of being sent via email.
+  User wants to remove mock OTP option and make website go-live ready.
+
+backend:
+  - task: "Forgot Password OTP Email"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added RESEND_API_KEY and SENDER_EMAIL to .env. Removed mock OTP fallback. Now returns error if email fails."
+  
+  - task: "Send OTP Email Verification"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed mock OTP (123456) bypass. API no longer returns OTP in response. Email sent via Resend."
+
+  - task: "Verify OTP"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed mock OTP (123456) acceptance. Only real OTPs from otp_storage are accepted."
+
+frontend:
+  - task: "Remove Mock OTP Hints from UI"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed 'For Testing use OTP 123456' hints from ForgotPassword.js, TutorSignup.js, StudentSignup.js"
+  
+  - task: "Remove Mock OTP Toast Display"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/StudentDashboard.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Removed code that displays mock OTP in toast notification"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Forgot Password OTP Email"
+    - "Send OTP Email Verification"
+    - "Verify OTP"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Changes made:
+      1. Added Resend API key and sender email to backend .env
+      2. Removed ALL mock OTP (123456) bypass code from backend
+      3. Backend no longer returns OTP in API response
+      4. Backend now throws error if email service fails (no mock fallback)
+      5. Removed mock OTP hints from frontend UI pages
+      6. Removed mock OTP display in toast notifications
+      
+      Testing needed:
+      - Test forgot-password endpoint sends email (note: with onboarding@resend.dev, only account owner email works)
+      - Test send-otp endpoint sends email
+      - Test verify-otp only accepts real OTPs (not 123456)
+      - Test reset-password only works with real OTPs
