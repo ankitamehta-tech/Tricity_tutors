@@ -240,12 +240,7 @@ export default function StudentSignup({ setUser }) {
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
                   <strong>Verify your email to continue.</strong><br/>
-                  Click "Send Email OTP" and check your inbox.
-                </p>
-              </div>
-              <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-800">
-                  <strong>For Testing:</strong> Use OTP <code className="bg-amber-100 px-1 rounded">123456</code>
+                  Click "Send Email OTP" and check your inbox (and spam folder).
                 </p>
               </div>
               <div>
