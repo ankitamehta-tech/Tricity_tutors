@@ -397,17 +397,6 @@ async def reset_password(data: ResetPasswordRequest):
     """Reset password using OTP"""
     stored_otp = otp_storage.get(f"{data.email}_reset")
     
-    # Allow mock OTP 123456 for testing
-    if data.otp == "123456":
-        hashed_password = hash_password(data.new_password)
-        await db.users.update_one(
-            {"email": data.email},
-            {"$set": {"password": hashed_password}}
-        )
-        if f"{data.email}_reset" in otp_storage:
-            del otp_storage[f"{data.email}_reset"]
-        return {"message": "Password reset successfully"}
-    
     if not stored_otp:
         raise HTTPException(status_code=400, detail="No reset request found. Please request a new OTP.")
     
@@ -433,21 +422,8 @@ async def reset_password(data: ResetPasswordRequest):
 async def verify_otp(data: VerifyOTPRequest):
     stored_otp = otp_storage.get(f"{data.email}_{data.otp_type}")
     
-    # Allow mock OTP 123456 for testing even without send-otp call
-    if data.otp == "123456":
-        field = "email_verified" if data.otp_type == "email" else "mobile_verified"
-        await db.users.update_one(
-            {"email": data.email},
-            {"$set": {field: True}}
-        )
-        
-        if f"{data.email}_{data.otp_type}" in otp_storage:
-            del otp_storage[f"{data.email}_{data.otp_type}"]
-        
-        return {"message": f"{data.otp_type.capitalize()} verified successfully"}
-    
     if not stored_otp:
-        raise HTTPException(status_code=400, detail="No OTP found. Please request a new one or use mock OTP 123456.")
+        raise HTTPException(status_code=400, detail="No OTP found. Please request a new one.")
     
     if datetime.now(timezone.utc).isoformat() > stored_otp["expires_at"]:
         del otp_storage[f"{data.email}_{data.otp_type}"]
@@ -477,7 +453,7 @@ async def verify_otp(data: VerifyOTPRequest):
             except Exception as e:
                 logger.error(f"Twilio verification failed: {str(e)}")
     
-    if data.otp == stored_otp["code"] or data.otp == "123456":
+    if data.otp == stored_otp["code"]:
         field = "email_verified" if data.otp_type == "email" else "mobile_verified"
         await db.users.update_one(
             {"email": data.email},
