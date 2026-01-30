@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { 
   GraduationCap, Coins, Briefcase, MessageSquare, Bell, Video, LogOut, 
   Eye, Send, Star, Users, Camera, Clock, MapPin, User, ChevronRight,
-  Wallet, FileText, X, Upload, Link as LinkIcon
+  Wallet, FileText, X, Upload, Link as LinkIcon, Trash2, AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, logout } from '@/utils/api';
