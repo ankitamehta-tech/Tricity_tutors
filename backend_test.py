@@ -180,11 +180,11 @@ class TricityTutorsAPITester:
         """Test forgot password API - should send real email and not return OTP"""
         print("\n🔍 Testing Forgot Password API...")
         
-        # Test with registered email
-        forgot_data = {"email": "test@example.com"}
+        # Test with registered email (using account owner's email for actual email delivery)
+        forgot_data = {"email": "ankitamehta2025@gmail.com"}
         
         success, response = self.run_test(
-            "Forgot Password - Registered Email",
+            "Forgot Password - Account Owner Email",
             "POST",
             "api/auth/forgot-password",
             200,
@@ -206,10 +206,28 @@ class TricityTutorsAPITester:
                 self.log_test("Forgot Password Security", False, "OTP should not be returned in response")
                 return False
         
+        # Test with any other email (should still return success for security)
+        forgot_data_test = {"email": "test@example.com"}
+        
+        success2, response2 = self.run_test(
+            "Forgot Password - Test Email",
+            "POST",
+            "api/auth/forgot-password",
+            200,
+            data=forgot_data_test
+        )
+        
+        if success2:
+            if "mode" in response2 and response2["mode"] == "real":
+                print("   ✅ Test email also returns success (security)")
+            else:
+                self.log_test("Forgot Password Test Email Security", False, "Should return success for any email")
+                return False
+        
         # Test with non-registered email (should still return success for security)
         forgot_data_unregistered = {"email": "nonexistent@example.com"}
         
-        success2, response2 = self.run_test(
+        success3, response3 = self.run_test(
             "Forgot Password - Non-registered Email",
             "POST",
             "api/auth/forgot-password",
@@ -217,14 +235,14 @@ class TricityTutorsAPITester:
             data=forgot_data_unregistered
         )
         
-        if success2:
-            if "mode" in response2 and response2["mode"] == "real":
+        if success3:
+            if "mode" in response3 and response3["mode"] == "real":
                 print("   ✅ Non-registered email also returns success (security)")
             else:
                 self.log_test("Forgot Password Non-registered Security", False, "Should return success for non-registered emails")
                 return False
         
-        return success and success2
+        return success and success2 and success3
 
     def test_verify_otp_mock_rejection(self):
         """Test that mock OTP (123456) is now rejected"""
