@@ -1,56 +1,62 @@
 {
-  "timestamp": "2026-01-30T15:54:33.292253",
-  "total_tests": 8,
-  "passed_tests": 8,
+  "timestamp": "2026-01-30T15:54:54.595625",
+  "total_tests": 9,
+  "passed_tests": 9,
   "success_rate": 100.0,
   "results": [
     {
-      "test": "Forgot Password - Registered Email",
+      "test": "Forgot Password - Account Owner Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:31.454971"
+      "timestamp": "2026-01-30T15:54:52.258691"
+    },
+    {
+      "test": "Forgot Password - Test Email",
+      "success": true,
+      "details": "",
+      "timestamp": "2026-01-30T15:54:52.529667"
     },
     {
       "test": "Forgot Password - Non-registered Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:31.719768"
+      "timestamp": "2026-01-30T15:54:52.832008"
     },
     {
       "test": "Verify OTP - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:31.759223"
+      "timestamp": "2026-01-30T15:54:52.868642"
     },
     {
       "test": "Reset Password - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:31.793678"
+      "timestamp": "2026-01-30T15:54:52.904177"
     },
     {
       "test": "Create Test User for OTP (Optional)",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:32.064291"
+      "timestamp": "2026-01-30T15:54:53.170101"
     },
     {
       "test": "Send OTP Email - Valid Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:32.571022"
+      "timestamp": "2026-01-30T15:54:53.670279"
     },
     {
       "test": "Create Test User for Email Limitation Test (Optional)",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:32.835908"
+      "timestamp": "2026-01-30T15:54:53.931329"
     },
     {
       "test": "Send OTP Email - Non-owner Email (Expected to Fail)",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-30T15:54:33.291373"
+      "timestamp": "2026-01-30T15:54:54.594566"
     }
   ]
 }
