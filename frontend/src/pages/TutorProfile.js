@@ -365,7 +365,7 @@ export default function TutorProfile({ user }) {
                           className="w-full rounded-full"
                           disabled={!reviewData.comment || reviewData.comment.length < 20}
                         >
-                          Submit Review
+                          {existingReview ? 'Update Review' : 'Submit Review'}
                         </Button>
                       </form>
                     </DialogContent>
