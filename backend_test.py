@@ -53,7 +53,11 @@ class TricityTutorsAPITester:
             elif method == 'DELETE':
                 response = requests.delete(url, headers=test_headers, timeout=10)
 
-            success = response.status_code == expected_status
+            # Handle multiple expected status codes
+            if isinstance(expected_status, list):
+                success = response.status_code in expected_status
+            else:
+                success = response.status_code == expected_status
             
             if success:
                 self.log_test(name, True)
@@ -62,7 +66,10 @@ class TricityTutorsAPITester:
                 except:
                     return True, response.text
             else:
-                error_msg = f"Expected {expected_status}, got {response.status_code}"
+                if isinstance(expected_status, list):
+                    error_msg = f"Expected one of {expected_status}, got {response.status_code}"
+                else:
+                    error_msg = f"Expected {expected_status}, got {response.status_code}"
                 try:
                     error_detail = response.json()
                     error_msg += f" - {error_detail}"
