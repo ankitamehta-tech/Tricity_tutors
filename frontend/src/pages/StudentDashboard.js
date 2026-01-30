@@ -122,13 +122,9 @@ export default function StudentDashboard({ user, setUser }) {
   const sendEmailOTP = async () => {
     try {
       const response = await api.post(`/auth/send-otp?email=${user.email}&otp_type=email`);
-      if (response.data.mode === 'mock') {
-        toast.success(`OTP sent! Mock OTP: ${response.data.otp}`);
-      } else {
-        toast.success('OTP sent to your email!');
-      }
+      toast.success('OTP sent to your email! Please check your inbox.');
     } catch (error) {
-      toast.error('Failed to send OTP');
+      toast.error(error.response?.data?.detail || 'Failed to send OTP');
     }
   };
 
