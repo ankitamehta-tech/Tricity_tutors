@@ -168,7 +168,7 @@ class TutorProfileUpdate(BaseModel):
 class StudentRequirement(BaseModel):
     subject: str
     level_class: str
-    mode: str
+    mode: List[str]  # Changed to List to support multiple modes
     requirement_type: str
     gender_preference: Optional[str] = None
     time_preference: str
@@ -188,6 +188,12 @@ class StudentRequirement(BaseModel):
         if not phone_digits.isdigit():
             raise ValueError('Phone number must contain only digits')
         return phone_digits
+    
+    @validator('mode')
+    def validate_mode(cls, v):
+        if not v or len(v) == 0:
+            raise ValueError('At least one study mode must be selected')
+        return v
 
 class ReviewCreate(BaseModel):
     tutor_id: str
