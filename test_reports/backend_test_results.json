@@ -1,68 +1,44 @@
 {
-  "timestamp": "2026-01-24T09:39:16.563155",
-  "total_tests": 10,
-  "passed_tests": 10,
-  "success_rate": 100.0,
+  "timestamp": "2026-01-30T15:53:07.249878",
+  "total_tests": 6,
+  "passed_tests": 5,
+  "success_rate": 83.33333333333334,
   "results": [
     {
-      "test": "Tutor Signup",
+      "test": "Forgot Password - Registered Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-24T09:39:16.175951"
+      "timestamp": "2026-01-30T15:53:05.607770"
     },
     {
-      "test": "Get Tutors List",
+      "test": "Forgot Password - Non-registered Email",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-24T09:39:16.215439"
+      "timestamp": "2026-01-30T15:53:05.876113"
     },
     {
-      "test": "Get Tutor Profile",
+      "test": "Verify OTP - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-24T09:39:16.259133"
+      "timestamp": "2026-01-30T15:53:05.917134"
     },
     {
-      "test": "Update Tutor Profile",
+      "test": "Reset Password - Mock OTP Should Fail",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-24T09:39:16.309019"
+      "timestamp": "2026-01-30T15:53:05.957838"
     },
     {
-      "test": "OTP Verification (Mock)",
+      "test": "Create Test User for OTP",
       "success": true,
       "details": "",
-      "timestamp": "2026-01-24T09:39:16.349641"
+      "timestamp": "2026-01-30T15:53:06.705955"
     },
     {
-      "test": "Get Current User",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-24T09:39:16.390706"
-    },
-    {
-      "test": "Get Wallet",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-24T09:39:16.431861"
-    },
-    {
-      "test": "Purchase Coins (Mock)",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-24T09:39:16.482461"
-    },
-    {
-      "test": "Get Messages",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-24T09:39:16.522995"
-    },
-    {
-      "test": "Get Conversations",
-      "success": true,
-      "details": "",
-      "timestamp": "2026-01-24T09:39:16.562337"
+      "test": "Send OTP Email",
+      "success": false,
+      "details": "Expected 200, got 520 - {'detail': 'Failed to send OTP email. Please try again later.'}",
+      "timestamp": "2026-01-30T15:53:07.248847"
     }
   ]
 }
