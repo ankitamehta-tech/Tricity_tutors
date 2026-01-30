@@ -169,23 +169,162 @@ class TricityTutorsAPITester:
         
         return success
 
-    def test_otp_verification(self):
-        """Test OTP verification with mock OTP"""
+    def test_forgot_password_api(self):
+        """Test forgot password API - should send real email and not return OTP"""
+        print("\n🔍 Testing Forgot Password API...")
+        
+        # Test with registered email
+        forgot_data = {"email": "test@example.com"}
+        
+        success, response = self.run_test(
+            "Forgot Password - Registered Email",
+            "POST",
+            "api/auth/forgot-password",
+            200,
+            data=forgot_data
+        )
+        
+        if success:
+            # Check response format
+            if "mode" in response and response["mode"] == "real":
+                print("   ✅ Response has 'mode': 'real'")
+            else:
+                self.log_test("Forgot Password Response Format", False, "Missing 'mode': 'real' in response")
+                return False
+            
+            # Check that OTP is NOT in response
+            if "otp" not in response:
+                print("   ✅ OTP not returned in response (security)")
+            else:
+                self.log_test("Forgot Password Security", False, "OTP should not be returned in response")
+                return False
+        
+        # Test with non-registered email (should still return success for security)
+        forgot_data_unregistered = {"email": "nonexistent@example.com"}
+        
+        success2, response2 = self.run_test(
+            "Forgot Password - Non-registered Email",
+            "POST",
+            "api/auth/forgot-password",
+            200,
+            data=forgot_data_unregistered
+        )
+        
+        if success2:
+            if "mode" in response2 and response2["mode"] == "real":
+                print("   ✅ Non-registered email also returns success (security)")
+            else:
+                self.log_test("Forgot Password Non-registered Security", False, "Should return success for non-registered emails")
+                return False
+        
+        return success and success2
+
+    def test_verify_otp_mock_rejection(self):
+        """Test that mock OTP (123456) is now rejected"""
+        print("\n🔍 Testing OTP Verification - Mock OTP Rejection...")
+        
         otp_data = {
-            "email": "testtutor@example.com",
+            "email": "test@example.com",
             "otp": "123456",
             "otp_type": "email"
         }
         
+        # This should now FAIL with 400 error
         success, response = self.run_test(
-            "OTP Verification (Mock)",
+            "Verify OTP - Mock OTP Should Fail",
             "POST",
             "api/auth/verify-otp",
-            200,
+            400,  # Expecting 400 error now
             data=otp_data
         )
         
-        return success
+        if success:
+            # Check error message
+            if "detail" in response and "No OTP found" in response["detail"]:
+                print("   ✅ Mock OTP correctly rejected with proper error message")
+                return True
+            else:
+                self.log_test("OTP Error Message", False, f"Expected 'No OTP found' error, got: {response}")
+                return False
+        
+        return False
+
+    def test_reset_password_mock_rejection(self):
+        """Test that reset password with mock OTP (123456) is rejected"""
+        print("\n🔍 Testing Reset Password - Mock OTP Rejection...")
+        
+        reset_data = {
+            "email": "test@example.com",
+            "otp": "123456",
+            "new_password": "newpass123"
+        }
+        
+        # This should now FAIL with 400 error
+        success, response = self.run_test(
+            "Reset Password - Mock OTP Should Fail",
+            "POST",
+            "api/auth/reset-password",
+            400,  # Expecting 400 error now
+            data=reset_data
+        )
+        
+        if success:
+            # Check error message
+            if "detail" in response and ("No reset request found" in response["detail"] or "No OTP found" in response["detail"]):
+                print("   ✅ Mock OTP correctly rejected in reset password")
+                return True
+            else:
+                self.log_test("Reset Password Error Message", False, f"Expected proper error message, got: {response}")
+                return False
+        
+        return False
+
+    def test_send_otp_email_api(self):
+        """Test send OTP email API"""
+        print("\n🔍 Testing Send OTP Email API...")
+        
+        # First create a test user
+        signup_data = {
+            "email": "otptest@example.com",
+            "password": "Test123!@#",
+            "role": "student",
+            "name": "OTP Test User"
+        }
+        
+        # Try to signup (might fail if user exists, that's ok)
+        self.run_test(
+            "Create Test User for OTP",
+            "POST",
+            "api/auth/signup",
+            200,
+            data=signup_data
+        )
+        
+        # Test send OTP
+        success, response = self.run_test(
+            "Send OTP Email",
+            "POST",
+            "api/auth/send-otp?email=otptest@example.com&otp_type=email",
+            200
+        )
+        
+        if success:
+            # Check response format
+            if "mode" in response and response["mode"] == "real":
+                print("   ✅ Send OTP returns 'mode': 'real'")
+            else:
+                self.log_test("Send OTP Response Format", False, "Missing 'mode': 'real' in response")
+                return False
+            
+            # Check that OTP is NOT in response
+            if "otp" not in response:
+                print("   ✅ OTP not returned in send-otp response")
+                return True
+            else:
+                self.log_test("Send OTP Security", False, "OTP should not be returned in response")
+                return False
+        
+        return False
 
     def test_wallet_operations(self):
         """Test wallet related APIs"""
