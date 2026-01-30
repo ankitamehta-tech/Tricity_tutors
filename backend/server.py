@@ -504,16 +504,16 @@ async def send_otp(email: EmailStr, otp_type: str):
                 params = {
                     "from": SENDER_EMAIL,
                     "to": [email],
-                    "subject": f"Your Tricity Tutors OTP: {otp_code}",
+                    "subject": f"Your Tricity Tutors Verification OTP",
                     "html": html_content
                 }
                 await asyncio.to_thread(resend.Emails.send, params)
-                return {"message": "OTP sent to email via Resend", "otp": otp_code, "mode": "real"}
+                return {"message": "OTP sent to your email! Please check your inbox.", "mode": "real"}
             except Exception as e:
                 logger.error(f"Resend email failed: {str(e)}")
-                return {"message": "OTP sent to email (Mock Mode)", "otp": otp_code, "mode": "mock"}
+                raise HTTPException(status_code=500, detail="Failed to send OTP email. Please try again later.")
         else:
-            return {"message": "OTP sent to email (Mock Mode)", "otp": otp_code, "mode": "mock"}
+            raise HTTPException(status_code=500, detail="Email service not configured. Please contact support.")
     
     elif otp_type == "mobile":
         mobile = user.get('mobile', '')
@@ -524,14 +524,14 @@ async def send_otp(email: EmailStr, otp_type: str):
                     to=phone_number,
                     channel='sms'
                 )
-                return {"message": "OTP sent to mobile via Twilio", "otp": "Check your phone", "mode": "real"}
+                return {"message": "OTP sent to your mobile! Please check your phone.", "mode": "real"}
             except Exception as e:
                 logger.error(f"Twilio SMS failed: {str(e)}")
-                return {"message": "OTP sent to mobile (Mock Mode)", "otp": otp_code, "mode": "mock"}
+                raise HTTPException(status_code=500, detail="Failed to send SMS OTP. Please try again later.")
         else:
-            return {"message": "OTP sent to mobile (Mock Mode)", "otp": otp_code, "mode": "mock"}
+            raise HTTPException(status_code=500, detail="SMS service not configured. Please contact support.")
     
-    return {"message": "OTP sent (Mock Mode)", "otp": otp_code, "mode": "mock"}
+    raise HTTPException(status_code=400, detail="Invalid OTP type. Use 'email' or 'mobile'.")
 
 @api_router.get("/tutor/profile")
 async def get_tutor_profile(current_user: dict = Depends(get_current_user)):
