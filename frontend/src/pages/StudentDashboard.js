@@ -565,7 +565,9 @@ export default function StudentDashboard({ user, setUser }) {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <h3 className="font-semibold text-lg">{req.subject}</h3>
-                            <p className="text-sm text-muted-foreground">{req.level_class} • {req.mode}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {req.level_class} • {Array.isArray(req.mode) ? req.mode.join(', ') : req.mode}
+                            </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <Badge className={req.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}>
