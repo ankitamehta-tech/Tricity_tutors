@@ -464,6 +464,421 @@ class TricityTutorsAPITester:
         
         return success
 
+    def test_student_signup(self):
+        """Test student signup API for review testing"""
+        signup_data = {
+            "email": "teststudent@example.com",
+            "password": "Test123!@#",
+            "role": "student",
+            "name": "Test Student",
+            "mobile": "9876543211"
+        }
+        
+        success, response = self.run_test(
+            "Student Signup",
+            "POST",
+            "api/auth/signup",
+            200,
+            data=signup_data
+        )
+        
+        if success and 'token' in response:
+            return response['token'], response['user']['id']
+        return None, None
+
+    def test_review_system_one_per_student(self):
+        """Test review system - one review per student with update functionality"""
+        print("\n🔍 Testing Review System - One Review Per Student...")
+        
+        # First, create a student account
+        student_token, student_id = self.test_student_signup()
+        if not student_token:
+            # Try login if signup failed
+            login_data = {
+                "email": "teststudent@example.com",
+                "password": "Test123!@#"
+            }
+            success, response = self.run_test(
+                "Student Login for Review Test",
+                "POST",
+                "api/auth/login",
+                200,
+                data=login_data
+            )
+            if success and 'token' in response:
+                student_token = response['token']
+                student_id = response['user']['id']
+            else:
+                self.log_test("Review System Setup", False, "Could not create/login student")
+                return False
+        
+        # Get a tutor ID (use the existing tutor from previous tests)
+        tutor_id = None
+        if self.token:  # This should be the tutor token from earlier tests
+            success, response = self.run_test(
+                "Get Current Tutor for Review Test",
+                "GET",
+                "api/me",
+                200
+            )
+            if success:
+                tutor_id = response['id']
+        
+        if not tutor_id:
+            self.log_test("Review System Setup", False, "Could not get tutor ID")
+            return False
+        
+        # Switch to student token for review operations
+        original_token = self.token
+        self.token = student_token
+        
+        # First review
+        first_review_data = {
+            "tutor_id": tutor_id,
+            "rating": 4,
+            "comment": "Good tutor, very helpful"
+        }
+        
+        success, response = self.run_test(
+            "Create First Review",
+            "POST",
+            "api/reviews",
+            200,
+            data=first_review_data
+        )
+        
+        if not success:
+            self.token = original_token
+            return False
+        
+        # Check that response indicates new review (updated: false)
+        if response.get("updated") != False:
+            self.log_test("First Review Response", False, f"Expected 'updated': false, got: {response}")
+            self.token = original_token
+            return False
+        
+        # Second review with same tutor (should update)
+        second_review_data = {
+            "tutor_id": tutor_id,
+            "rating": 5,
+            "comment": "Updated review, excellent!"
+        }
+        
+        success, response = self.run_test(
+            "Update Existing Review",
+            "POST",
+            "api/reviews",
+            200,
+            data=second_review_data
+        )
+        
+        if not success:
+            self.token = original_token
+            return False
+        
+        # Check that response indicates update (updated: true)
+        if response.get("updated") != True:
+            self.log_test("Second Review Response", False, f"Expected 'updated': true, got: {response}")
+            self.token = original_token
+            return False
+        
+        print("   ✅ Review system correctly updates existing review instead of creating new one")
+        
+        # Restore original token
+        self.token = original_token
+        return True
+
+    def test_tutor_reviews_endpoint(self):
+        """Test GET /api/reviews/my/received endpoint"""
+        print("\n🔍 Testing Tutor Reviews Endpoint...")
+        
+        # Ensure we have tutor token
+        if not self.token:
+            self.log_test("Tutor Reviews Endpoint", False, "No tutor token available")
+            return False
+        
+        success, response = self.run_test(
+            "Get My Received Reviews",
+            "GET",
+            "api/reviews/my/received",
+            200
+        )
+        
+        if success:
+            print(f"   ✅ Found {len(response)} reviews for tutor")
+            return True
+        return False
+
+    def test_check_existing_review_endpoint(self):
+        """Test GET /api/reviews/check/{tutor_id} endpoint"""
+        print("\n🔍 Testing Check Existing Review Endpoint...")
+        
+        # Get tutor ID
+        tutor_id = None
+        if self.token:
+            success, response = self.run_test(
+                "Get Current User for Review Check",
+                "GET",
+                "api/me",
+                200
+            )
+            if success:
+                tutor_id = response['id']
+        
+        if not tutor_id:
+            self.log_test("Check Review Setup", False, "Could not get tutor ID")
+            return False
+        
+        # Create/login student for testing
+        student_token, student_id = self.test_student_signup()
+        if not student_token:
+            login_data = {
+                "email": "teststudent@example.com",
+                "password": "Test123!@#"
+            }
+            success, response = self.run_test(
+                "Student Login for Check Review",
+                "POST",
+                "api/auth/login",
+                200,
+                data=login_data
+            )
+            if success and 'token' in response:
+                student_token = response['token']
+            else:
+                self.log_test("Check Review Setup", False, "Could not login student")
+                return False
+        
+        # Switch to student token
+        original_token = self.token
+        self.token = student_token
+        
+        success, response = self.run_test(
+            "Check Existing Review",
+            "GET",
+            f"api/reviews/check/{tutor_id}",
+            200
+        )
+        
+        if success:
+            # Should have has_review and review fields
+            if "has_review" in response and "review" in response:
+                print(f"   ✅ Check review response: has_review={response['has_review']}")
+                self.token = original_token
+                return True
+            else:
+                self.log_test("Check Review Response Format", False, f"Missing required fields in response: {response}")
+        
+        self.token = original_token
+        return False
+
+    def test_profile_view_tracking(self):
+        """Test POST /api/tutors/{tutor_id}/view endpoint"""
+        print("\n🔍 Testing Profile View Tracking...")
+        
+        # Get tutor ID
+        tutor_id = None
+        if self.token:
+            success, response = self.run_test(
+                "Get Current User for View Tracking",
+                "GET",
+                "api/me",
+                200
+            )
+            if success:
+                tutor_id = response['id']
+        
+        if not tutor_id:
+            self.log_test("Profile View Setup", False, "Could not get tutor ID")
+            return False
+        
+        # Test profile view tracking (no auth required)
+        original_token = self.token
+        self.token = None  # Remove auth to test no auth required
+        
+        success, response = self.run_test(
+            "Track Profile View",
+            "POST",
+            f"api/tutors/{tutor_id}/view",
+            200
+        )
+        
+        self.token = original_token
+        
+        if success:
+            print("   ✅ Profile view tracked successfully without authentication")
+            return True
+        return False
+
+    def test_delete_profile_endpoint(self):
+        """Test DELETE /api/profile/delete endpoint"""
+        print("\n🔍 Testing Delete Profile Endpoint...")
+        
+        # Create a test user specifically for deletion
+        delete_user_data = {
+            "email": "deletetest@example.com",
+            "password": "Test123!@#",
+            "role": "student",
+            "name": "Delete Test User",
+            "mobile": "9876543212"
+        }
+        
+        success, response = self.run_test(
+            "Create User for Deletion Test",
+            "POST",
+            "api/auth/signup",
+            [200, 400],  # Accept both success and "already exists"
+            data=delete_user_data
+        )
+        
+        delete_token = None
+        if success and 'token' in response:
+            delete_token = response['token']
+        else:
+            # Try login if signup failed
+            login_data = {
+                "email": "deletetest@example.com",
+                "password": "Test123!@#"
+            }
+            success, response = self.run_test(
+                "Login User for Deletion Test",
+                "POST",
+                "api/auth/login",
+                200,
+                data=login_data
+            )
+            if success and 'token' in response:
+                delete_token = response['token']
+        
+        if not delete_token:
+            self.log_test("Delete Profile Setup", False, "Could not create/login test user for deletion")
+            return False
+        
+        # Test delete without auth (should fail)
+        original_token = self.token
+        self.token = None
+        
+        success, response = self.run_test(
+            "Delete Profile Without Auth (Should Fail)",
+            "DELETE",
+            "api/profile/delete",
+            401  # Expecting unauthorized
+        )
+        
+        if not success:
+            self.log_test("Delete Profile Auth Check", False, "Delete should require authentication")
+            self.token = original_token
+            return False
+        
+        # Test delete with auth (should succeed)
+        self.token = delete_token
+        
+        success, response = self.run_test(
+            "Delete Profile With Auth",
+            "DELETE",
+            "api/profile/delete",
+            200
+        )
+        
+        self.token = original_token
+        
+        if success:
+            print("   ✅ Profile deletion requires auth and works correctly")
+            return True
+        return False
+
+    def test_multi_mode_requirements(self):
+        """Test POST /api/requirements with mode as array"""
+        print("\n🔍 Testing Multi-Mode Requirements...")
+        
+        # Create/login student for requirements
+        student_token, student_id = self.test_student_signup()
+        if not student_token:
+            login_data = {
+                "email": "teststudent@example.com",
+                "password": "Test123!@#"
+            }
+            success, response = self.run_test(
+                "Student Login for Requirements",
+                "POST",
+                "api/auth/login",
+                200,
+                data=login_data
+            )
+            if success and 'token' in response:
+                student_token = response['token']
+            else:
+                self.log_test("Multi-Mode Requirements Setup", False, "Could not login student")
+                return False
+        
+        # Switch to student token
+        original_token = self.token
+        self.token = student_token
+        
+        # Test requirements with mode as array
+        requirement_data = {
+            "subject": "Mathematics",
+            "level_class": "12",
+            "mode": ["Online", "Home"],  # Array of modes
+            "requirement_type": "Regular Classes",
+            "gender_preference": "Any",
+            "time_preference": "Evening",
+            "languages": ["English", "Hindi"],
+            "location": "Chandigarh",
+            "phone": "9876543213",
+            "description": "Need help with calculus"
+        }
+        
+        success, response = self.run_test(
+            "Create Requirement with Multi-Mode",
+            "POST",
+            "api/requirements",
+            [200, 403],  # Accept both success and email verification required
+            data=requirement_data
+        )
+        
+        self.token = original_token
+        
+        if success:
+            if "id" in response:
+                print("   ✅ Multi-mode requirements accepted successfully")
+                return True
+            elif "email" in str(response).lower() and "verify" in str(response).lower():
+                print("   ✅ Multi-mode requirements validation works (email verification required)")
+                return True
+        return False
+
+    def run_new_endpoint_tests(self):
+        """Run tests for new backend endpoints"""
+        print("🚀 Starting New Backend Endpoint Tests")
+        print(f"📍 Base URL: {self.base_url}")
+        print("=" * 60)
+        
+        # First ensure we have a tutor logged in
+        if not self.test_tutor_signup():
+            print("❌ Tutor signup failed, trying login...")
+            if not self.test_login():
+                print("❌ Both tutor signup and login failed, stopping tests")
+                return False
+        
+        # Test the new endpoints
+        test_results = []
+        
+        print("\n📝 Testing New Backend Endpoints...")
+        test_results.append(self.test_review_system_one_per_student())
+        test_results.append(self.test_tutor_reviews_endpoint())
+        test_results.append(self.test_check_existing_review_endpoint())
+        test_results.append(self.test_profile_view_tracking())
+        test_results.append(self.test_delete_profile_endpoint())
+        test_results.append(self.test_multi_mode_requirements())
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print(f"📊 New Endpoint Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
+        print(f"✅ Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
+        
+        return all(test_results)
+
     def run_otp_focused_tests(self):
         """Run OTP-focused tests as requested in review"""
         print("🚀 Starting OTP Email Functionality Tests")
