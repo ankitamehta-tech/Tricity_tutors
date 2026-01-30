@@ -283,9 +283,12 @@ class TricityTutorsAPITester:
         """Test send OTP email API"""
         print("\n🔍 Testing Send OTP Email API...")
         
-        # First create a test user
+        # Use the account owner's email for testing (Resend limitation in test mode)
+        test_email = "ankitamehta2025@gmail.com"
+        
+        # First create a test user with the valid email
         signup_data = {
-            "email": "otptest@example.com",
+            "email": test_email,
             "password": "Test123!@#",
             "role": "student",
             "name": "OTP Test User"
@@ -300,11 +303,11 @@ class TricityTutorsAPITester:
             data=signup_data
         )
         
-        # Test send OTP
+        # Test send OTP with valid email
         success, response = self.run_test(
-            "Send OTP Email",
+            "Send OTP Email - Valid Email",
             "POST",
-            "api/auth/send-otp?email=otptest@example.com&otp_type=email",
+            f"api/auth/send-otp?email={test_email}&otp_type=email",
             200
         )
         
@@ -322,6 +325,46 @@ class TricityTutorsAPITester:
                 return True
             else:
                 self.log_test("Send OTP Security", False, "OTP should not be returned in response")
+                return False
+        
+        return False
+
+    def test_email_service_limitation(self):
+        """Test email service limitation with non-owner email"""
+        print("\n🔍 Testing Email Service Limitation...")
+        
+        # First create a test user with non-owner email
+        signup_data = {
+            "email": "otptest@example.com",
+            "password": "Test123!@#",
+            "role": "student",
+            "name": "OTP Test User"
+        }
+        
+        # Try to signup (might fail if user exists, that's ok)
+        self.run_test(
+            "Create Test User for Email Limitation Test",
+            "POST",
+            "api/auth/signup",
+            200,
+            data=signup_data
+        )
+        
+        # Test send OTP with non-owner email (should fail in test environment)
+        success, response = self.run_test(
+            "Send OTP Email - Non-owner Email (Expected to Fail)",
+            "POST",
+            "api/auth/send-otp?email=otptest@example.com&otp_type=email",
+            500  # Expecting 500 error due to Resend limitation
+        )
+        
+        if success:
+            # Check error message mentions email service limitation
+            if "detail" in response and "Failed to send OTP email" in response["detail"]:
+                print("   ✅ Email service correctly reports limitation")
+                return True
+            else:
+                self.log_test("Email Service Error Message", False, f"Expected email service error, got: {response}")
                 return False
         
         return False
