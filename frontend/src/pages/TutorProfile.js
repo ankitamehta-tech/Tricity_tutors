@@ -21,11 +21,15 @@ export default function TutorProfile({ user }) {
   const [reviewData, setReviewData] = useState({ rating: 5, comment: '' });
   const [accessInfo, setAccessInfo] = useState({ has_message_access: false, has_contact_access: false, current_coins: 0 });
 
+  const [existingReview, setExistingReview] = useState(null);
+
   useEffect(() => {
     loadTutorProfile();
     loadReviews();
+    trackProfileView();
     if (user) {
       checkAccess();
+      checkExistingReview();
     }
   }, [tutorId, user]);
 
@@ -41,12 +45,35 @@ export default function TutorProfile({ user }) {
     }
   };
 
+  const trackProfileView = async () => {
+    try {
+      await api.post(`/tutors/${tutorId}/view`);
+    } catch (error) {
+      // Silent fail - don't interrupt user experience
+    }
+  };
+
   const loadReviews = async () => {
     try {
       const response = await api.get(`/reviews/${tutorId}`);
       setReviews(response.data);
     } catch (error) {
       console.error('Failed to load reviews:', error);
+    }
+  };
+
+  const checkExistingReview = async () => {
+    try {
+      const response = await api.get(`/reviews/check/${tutorId}`);
+      if (response.data.has_review) {
+        setExistingReview(response.data.review);
+        setReviewData({
+          rating: response.data.review.rating,
+          comment: response.data.review.comment
+        });
+      }
+    } catch (error) {
+      console.error('Failed to check existing review:', error);
     }
   };
 
