@@ -36,6 +36,7 @@ const tricityLocations = [
 ];
 
 export default function StudentDashboard({ user, setUser }) {
+  const navigate = useNavigate();
   const [myRequirements, setMyRequirements] = useState([]);
   const [tutors, setTutors] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
