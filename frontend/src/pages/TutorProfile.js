@@ -142,14 +142,20 @@ export default function TutorProfile({ user }) {
     }
 
     try {
-      await api.post('/reviews', {
+      const response = await api.post('/reviews', {
         tutor_id: tutorId,
         rating: reviewData.rating,
         comment: reviewData.comment
       });
-      toast.success('Review submitted successfully!');
+      
+      if (response.data.updated) {
+        toast.success('Review updated successfully!');
+      } else {
+        toast.success('Review submitted successfully!');
+      }
+      
       setShowReviewModal(false);
-      setReviewData({ rating: 5, comment: '' });
+      setExistingReview({ ...reviewData });
       loadReviews();
       loadTutorProfile();
     } catch (error) {
