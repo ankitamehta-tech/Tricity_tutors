@@ -304,13 +304,19 @@ export default function TutorProfile({ user }) {
                   <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
                     <DialogTrigger asChild>
                       <Button data-testid="write-review-btn" variant="outline" className="rounded-full">
-                        Write a Review
+                        {existingReview ? 'Edit Your Review' : 'Write a Review'}
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Write a Review for {tutor.name}</DialogTitle>
-                        <DialogDescription>Share your experience (minimum 20 characters)</DialogDescription>
+                        <DialogTitle>
+                          {existingReview ? `Edit Your Review for ${tutor.name}` : `Write a Review for ${tutor.name}`}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {existingReview 
+                            ? 'Update your review (minimum 20 characters)' 
+                            : 'Share your experience (minimum 20 characters)'}
+                        </DialogDescription>
                       </DialogHeader>
                       <form onSubmit={handleSubmitReview} className="space-y-4">
                         <div>
