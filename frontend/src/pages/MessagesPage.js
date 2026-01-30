@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,53 +11,55 @@ import { api } from '@/utils/api';
 
 export default function MessagesPage({ user }) {
   const location = useLocation();
-  const [messages, setMessages] = useState([]);
-  const [conversations, setConversations] = useState({});
+  const [conversations, setConversations] = useState([]);
   const [selectedUser, setSelectedUser] = useState(location.state?.recipientId || null);
+  const [selectedConversation, setSelectedConversation] = useState(null);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    loadMessages();
+    loadConversations();
   }, []);
 
   useEffect(() => {
     // If navigated with a recipient, select that conversation
     if (location.state?.recipientId) {
       setSelectedUser(location.state.recipientId);
+      loadThread(location.state.recipientId);
     }
   }, [location.state]);
 
-  const loadMessages = async () => {
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedConversation]);
+
+  const loadConversations = async () => {
     try {
-      const response = await api.get('/messages');
-      setMessages(response.data);
-      organizeConversations(response.data);
+      setLoading(true);
+      const response = await api.get('/messages/conversations');
+      setConversations(response.data);
+      setLoading(false);
     } catch (error) {
-      console.error('Failed to load messages:', error);
+      console.error('Failed to load conversations:', error);
+      setLoading(false);
     }
   };
 
-  const organizeConversations = (messages) => {
-    const convos = {};
-    messages.forEach(msg => {
-      const otherUserId = msg.sender_id === user.id ? msg.recipient_id : msg.sender_id;
-      const otherUserName = msg.sender_id === user.id ? 'User' : msg.sender_name;
-      
-      if (!convos[otherUserId]) {
-        convos[otherUserId] = {
-          userId: otherUserId,
-          userName: otherUserName,
-          messages: []
-        };
-      }
-      convos[otherUserId].messages.push(msg);
-    });
-    
-    Object.keys(convos).forEach(key => {
-      convos[key].messages.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    });
-    
-    setConversations(convos);
+  const loadThread = async (partnerId) => {
+    try {
+      const response = await api.get(`/messages/thread/${partnerId}`);
+      setSelectedConversation(response.data);
+    } catch (error) {
+      console.error('Failed to load thread:', error);
+    }
+  };
+
+  const handleSelectConversation = async (partnerId) => {
+    setSelectedUser(partnerId);
+    await loadThread(partnerId);
   };
 
   const handleSendMessage = async (e) => {
@@ -71,7 +73,9 @@ export default function MessagesPage({ user }) {
       });
       setNewMessage('');
       toast.success('Message sent!');
-      loadMessages();
+      // Reload conversation and thread
+      loadConversations();
+      loadThread(selectedUser);
     } catch (error) {
       if (error.response?.status === 402) {
         toast.error(error.response?.data?.detail || 'Insufficient coins. Please purchase coins first.');
