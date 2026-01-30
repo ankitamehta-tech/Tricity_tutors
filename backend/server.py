@@ -1222,6 +1222,47 @@ async def check_tutor_access(tutor_id: str, current_user: dict = Depends(get_cur
         "current_coins": user.get("coins", 0)
     }
 
+@api_router.post("/tutors/{tutor_id}/view")
+async def track_profile_view(tutor_id: str):
+    """Track a profile view for a tutor"""
+    result = await db.tutor_profiles.update_one(
+        {"user_id": tutor_id},
+        {"$inc": {"profile_views": 1}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Tutor not found")
+    return {"message": "Profile view tracked"}
+
+@api_router.delete("/profile/delete")
+async def delete_profile(current_user: dict = Depends(get_current_user)):
+    """Delete user profile and all associated data"""
+    user_id = current_user["id"]
+    role = current_user["role"]
+    
+    # Delete user account
+    await db.users.delete_one({"id": user_id})
+    
+    if role == UserRole.TUTOR:
+        # Delete tutor profile
+        await db.tutor_profiles.delete_one({"user_id": user_id})
+        # Delete reviews received by this tutor
+        await db.reviews.delete_many({"tutor_id": user_id})
+    else:
+        # Delete reviews written by this student
+        await db.reviews.delete_many({"student_id": user_id})
+        # Delete requirements posted by this student
+        await db.requirements.delete_many({"student_id": user_id})
+    
+    # Delete messages sent or received
+    await db.messages.delete_many({
+        "$or": [{"sender_id": user_id}, {"recipient_id": user_id}]
+    })
+    
+    # Delete transactions
+    await db.transactions.delete_many({"user_id": user_id})
+    
+    return {"message": "Profile deleted successfully"}
+
 app.include_router(api_router)
 
 app.add_middleware(
