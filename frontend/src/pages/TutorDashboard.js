@@ -272,6 +272,14 @@ export default function TutorDashboard({ user, setUser }) {
             >
               Profile
             </button>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeTab === 'reviews' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Reviews ({reviews.length})
+            </button>
           </div>
           
           <div className="flex items-center gap-3">
