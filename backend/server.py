@@ -349,7 +349,7 @@ async def forgot_password(data: ForgotPasswordRequest):
     user = await db.users.find_one({"email": data.email}, {"_id": 0})
     if not user:
         # Don't reveal if email exists or not for security
-        return {"message": "If this email is registered, you will receive an OTP shortly."}
+        return {"message": "If this email is registered, you will receive an OTP shortly.", "mode": "real"}
     
     otp_code = str(random.randint(100000, 999999))
     
@@ -381,16 +381,16 @@ async def forgot_password(data: ForgotPasswordRequest):
             params = {
                 "from": SENDER_EMAIL,
                 "to": [data.email],
-                "subject": f"Password Reset OTP: {otp_code} - Tricity Tutors",
+                "subject": f"Password Reset OTP - Tricity Tutors",
                 "html": html_content
             }
             await asyncio.to_thread(resend.Emails.send, params)
-            return {"message": "Password reset OTP sent to your email", "otp": otp_code, "mode": "real"}
+            return {"message": "Password reset OTP sent to your email", "mode": "real"}
         except Exception as e:
             logger.error(f"Resend email failed: {str(e)}")
-            return {"message": "Password reset OTP sent (Mock Mode)", "otp": otp_code, "mode": "mock"}
+            raise HTTPException(status_code=500, detail="Failed to send OTP email. Please try again later.")
     else:
-        return {"message": "Password reset OTP sent (Mock Mode)", "otp": otp_code, "mode": "mock"}
+        raise HTTPException(status_code=500, detail="Email service not configured. Please contact support.")
 
 @api_router.post("/auth/reset-password")
 async def reset_password(data: ResetPasswordRequest):
