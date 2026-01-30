@@ -110,39 +110,48 @@ user_problem_statement: |
 backend:
   - task: "Forgot Password OTP Email"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added RESEND_API_KEY and SENDER_EMAIL to .env. Removed mock OTP fallback. Now returns error if email fails."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Forgot password API correctly returns 'mode': 'real', does not expose OTP in response, and maintains security by returning success for any email address. Resend email service is properly configured and working for account owner email (ankitamehta2025@gmail.com). Test environment limitation: can only send to verified domain owner email."
   
   - task: "Send OTP Email Verification"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Removed mock OTP (123456) bypass. API no longer returns OTP in response. Email sent via Resend."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Send OTP API correctly returns 'mode': 'real', does not expose OTP in response, and successfully sends emails via Resend service. For non-owner emails, properly returns error due to Resend test environment limitations (expected behavior)."
 
   - task: "Verify OTP"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Removed mock OTP (123456) acceptance. Only real OTPs from otp_storage are accepted."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Mock OTP (123456) is now correctly rejected with proper error message 'No OTP found. Please request a new one.' Reset password API also correctly rejects mock OTP with appropriate error messages."
 
 frontend:
   - task: "Remove Mock OTP Hints from UI"
