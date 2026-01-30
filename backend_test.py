@@ -437,7 +437,13 @@ class TricityTutorsAPITester:
 
 def main():
     tester = TricityTutorsAPITester()
-    success = tester.run_all_tests()
+    
+    # Run OTP-focused tests as requested in review
+    success = tester.run_otp_focused_tests()
+    
+    # Create test reports directory if it doesn't exist
+    import os
+    os.makedirs('/app/test_reports', exist_ok=True)
     
     # Save test results
     with open('/app/test_reports/backend_test_results.json', 'w') as f:
