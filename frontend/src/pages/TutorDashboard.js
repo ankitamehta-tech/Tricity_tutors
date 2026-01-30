@@ -1003,10 +1003,10 @@ export default function TutorDashboard({ user, setUser }) {
                   <Button 
                     variant="outline" 
                     className="w-full rounded-lg"
-                    onClick={() => setActiveTab('profile')}
+                    onClick={() => setActiveTab('reviews')}
                   >
                     <Star className="w-4 h-4 mr-2" />
-                    View Reviews
+                    View Reviews ({reviews.length})
                   </Button>
                 </div>
               </CardContent>
