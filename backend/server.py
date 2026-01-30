@@ -789,6 +789,44 @@ async def delete_requirement(requirement_id: str, current_user: dict = Depends(g
 
 @api_router.post("/reviews")
 async def create_review(data: ReviewCreate, current_user: dict = Depends(get_current_user)):
+    # Check if student already reviewed this tutor
+    existing_review = await db.reviews.find_one({
+        "tutor_id": data.tutor_id,
+        "student_id": current_user["id"]
+    }, {"_id": 0})
+    
+    if existing_review:
+        # Update existing review instead of creating new one
+        await db.reviews.update_one(
+            {"id": existing_review["id"]},
+            {"$set": {
+                "rating": data.rating,
+                "comment": data.comment,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Update tutor profile reviews array
+        await db.tutor_profiles.update_one(
+            {"user_id": data.tutor_id, "reviews.id": existing_review["id"]},
+            {"$set": {
+                "reviews.$.rating": data.rating,
+                "reviews.$.comment": data.comment,
+                "reviews.$.updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Recalculate average rating
+        all_reviews = await db.reviews.find({"tutor_id": data.tutor_id}, {"_id": 0}).to_list(1000)
+        avg_rating = sum(r["rating"] for r in all_reviews) / len(all_reviews) if all_reviews else 0
+        await db.tutor_profiles.update_one(
+            {"user_id": data.tutor_id},
+            {"$set": {"average_rating": avg_rating}}
+        )
+        
+        return {"message": "Review updated successfully", "id": existing_review["id"], "updated": True}
+    
+    # Create new review
     review_id = str(uuid.uuid4())
     review_doc = {
         "id": review_id,
@@ -810,12 +848,33 @@ async def create_review(data: ReviewCreate, current_user: dict = Depends(get_cur
         {"$set": {"average_rating": avg_rating}, "$push": {"reviews": review_doc}}
     )
     
-    return {"message": "Review submitted successfully", "id": review_id}
+    return {"message": "Review submitted successfully", "id": review_id, "updated": False}
 
 @api_router.get("/reviews/{tutor_id}")
 async def get_tutor_reviews(tutor_id: str):
     reviews = await db.reviews.find({"tutor_id": tutor_id}, {"_id": 0}).sort("created_at", -1).to_list(100)
     return reviews
+
+@api_router.get("/reviews/my/received")
+async def get_my_received_reviews(current_user: dict = Depends(get_current_user)):
+    """Get all reviews received by the logged-in tutor"""
+    if current_user["role"] != UserRole.TUTOR:
+        raise HTTPException(status_code=403, detail="Only tutors can view their received reviews")
+    
+    reviews = await db.reviews.find({"tutor_id": current_user["id"]}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return reviews
+
+@api_router.get("/reviews/check/{tutor_id}")
+async def check_existing_review(tutor_id: str, current_user: dict = Depends(get_current_user)):
+    """Check if current user has already reviewed this tutor"""
+    existing_review = await db.reviews.find_one({
+        "tutor_id": tutor_id,
+        "student_id": current_user["id"]
+    }, {"_id": 0})
+    
+    if existing_review:
+        return {"has_review": True, "review": existing_review}
+    return {"has_review": False, "review": None}
 
 @api_router.post("/messages")
 async def send_message(data: MessageCreate, current_user: dict = Depends(get_current_user)):
